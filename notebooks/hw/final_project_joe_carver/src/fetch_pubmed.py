@@ -5,12 +5,13 @@ import time
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RAW_DATA_DIR = REPO_ROOT / 'data' / 'raw'
+MAX_RESULTS = 2000
 
 # ---------------------------------------------------------------
 # get citations from pubmed using biopython entrez functionality
 # ---------------------------------------------------------------
 
-def get_scientific_citations(journal_name, year, max_results=5,):
+def get_scientific_citations(journal_name, year, max_results=5):
     Entrez.email = "jocarver@g.ecc.u-tokyo.ac.jp"
     
     # use [PT] (Publication Type) to target core research articles 
@@ -24,8 +25,6 @@ def get_scientific_citations(journal_name, year, max_results=5,):
         f'NOT "News"[PT] '
         f'NOT "Biography"[PT]'
     )
-    
-    # print(f"Searching PubMed with filters:\n{query}\n")
     
     try:
         # 1. Search for IDs using the filtered query
@@ -54,9 +53,6 @@ def get_scientific_citations(journal_name, year, max_results=5,):
             title = medline_citation['Article']['ArticleTitle']
             
             # get publication type
-            # pub_types = medline_citation['Article']['PublicationTaskList'] if 'PublicationTaskList' in medline_citation['Article'] else []
-            # pub_type_names = [str(pt) for pt in pub_types]
-
             pub_type_names =medline_citation['Article'].get('PublicationTypeList', [])
             if not pub_type_names:
                 continue
@@ -92,15 +88,8 @@ def get_scientific_citations(journal_name, year, max_results=5,):
                 "funding_agencies": "|".join(funding_agency),
                 "funding_country": "|".join(funding_country)
             })
-            #print(pub_info)
-
-
             
-            # print(f"PMID: {pmid}")
-            # print(f"TITLE: {title}")
-            # print(f"PUB TYPES: {', '.join(pub_type_names)}")
-            # print("AUTHORS:")
-            
+            # get authors and affiliations
             if 'AuthorList' in medline_citation['Article']:
                 author_list = medline_citation['Article']['AuthorList']
                 for author in author_list:
@@ -115,10 +104,7 @@ def get_scientific_citations(journal_name, year, max_results=5,):
                     if author.get('AffiliationInfo'):
                         for aff_info in author['AffiliationInfo']:
                             affiliations.append(aff_info['Affiliation'])
-                            # print(aff_info['Affiliation'])
 
-                    # print(f"  - {author_name}")
-                    # print(f"    Affiliation: {aff_string}")
                     authors.append({
                         "PMID": pmid,
                         "author": author_name if author_name else None,
@@ -126,34 +112,28 @@ def get_scientific_citations(journal_name, year, max_results=5,):
                         })
             else:
                 continue
-                # print("  No authors listed.")
                 
-            # print("-" * 50)
         pubs = pd.DataFrame(pub_info)
         authors = pd.DataFrame(authors)
         print(f"Retrieved {len(pubs['title'].unique())} publications with {len(authors['author'])} authors from {journal_name} in {year}")
 
         return pubs, authors
-        # print("Saving XML as output csv")
-        # df.to_csv(RAW_DATA_DIR / csv_name)
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred during the xml fetch: {e}")
 
 if __name__ == "__main__":
-    # Test with a journal known for having lots of editorials/news (like Nature)
-
     all_authors = []
     all_pubs = []
 
     for year in range(2000,2026):
         time.sleep(2)
         try:
-            pubs, authors = get_scientific_citations(journal_name = "Nature", year = year, max_results= 2000)
+            pubs, authors = get_scientific_citations(journal_name = "Nature", year = year, max_results= MAX_RESULTS)
             all_pubs.append(pubs)
             all_authors.append(authors)
         except Exception as e:
-            print(f"An error occured during the main loop: {e}")
+            print(f"An error occured during the main loop during year {year} processing: {e}")
 
     final_pubs = pd.concat(all_pubs)
     final_authors = pd.concat(all_authors)
@@ -161,8 +141,5 @@ if __name__ == "__main__":
     csv_name_author = f"Nature_2000-2026_author_info.csv"
     final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
     final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
-
-    # get_scientific_citations(journal_name="Nature", year=2024, max_results=10, csv_name = "pubmed_citations.csv")
-    # get_scientific_citations(journal_name="Cell", year=2024, max_results=2000, csv_name = "pubmed_citations.csv")
 
 
