@@ -6,6 +6,9 @@ import time
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RAW_DATA_DIR = REPO_ROOT / 'data' / 'raw'
 MAX_RESULTS = 2000
+PUBLICATIONS = ['Nature', 'Cell']
+START = 2000
+END = 2026
 
 # ---------------------------------------------------------------
 # get citations from pubmed using biopython entrez functionality
@@ -108,7 +111,7 @@ def get_scientific_citations(journal_name, year, max_results=5):
                     authors.append({
                         "PMID": pmid,
                         "author": author_name if author_name else None,
-                        "affiliations": "|".join(affiliations) if affiliations else ["No affiliation"]
+                        "affiliations": "|".join(affiliations) if affiliations else "No affiliation"
                         })
             else:
                 continue
@@ -123,23 +126,44 @@ def get_scientific_citations(journal_name, year, max_results=5):
         print(f"An error occurred during the xml fetch: {e}")
 
 if __name__ == "__main__":
-    all_authors = []
-    all_pubs = []
+    
+    # all_authors = []
+    # all_pubs = []
 
-    for year in range(2000,2026):
-        time.sleep(2)
-        try:
-            pubs, authors = get_scientific_citations(journal_name = "Nature", year = year, max_results= MAX_RESULTS)
-            all_pubs.append(pubs)
-            all_authors.append(authors)
-        except Exception as e:
-            print(f"An error occured during the main loop during year {year} processing: {e}")
+    # for year in range(2000,2026):
+    #     time.sleep(2)
+    #     try:
+    #         pubs, authors = get_scientific_citations(journal_name = "Nature", year = year, max_results= MAX_RESULTS)
+    #         all_pubs.append(pubs)
+    #         all_authors.append(authors)
+    #     except Exception as e:
+    #         print(f"An error occured during the main loop during year {year} processing: {e}")
 
-    final_pubs = pd.concat(all_pubs)
-    final_authors = pd.concat(all_authors)
-    csv_name_pub = f"Nature_2000-2026_pub_info.csv"
-    csv_name_author = f"Nature_2000-2026_author_info.csv"
-    final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
-    final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
+    # final_pubs = pd.concat(all_pubs)
+    # final_authors = pd.concat(all_authors)
+    # csv_name_pub = f"Nature_2000-2026_pub_info.csv"
+    # csv_name_author = f"Nature_2000-2026_author_info.csv"
+    # final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
+    # final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
+    for publication in PUBLICATIONS:
+
+        all_authors = []
+        all_pubs = []
+
+        for year in range(START,END+1):
+            time.sleep(1)
+            try:
+                pubs, authors = get_scientific_citations(journal_name = publication, year = year, max_results= MAX_RESULTS)
+                all_pubs.append(pubs)
+                all_authors.append(authors)
+            except Exception as e:
+                print(f"An error occured during the main loop during year {year} processing: {e}")
+
+        final_pubs = pd.concat(all_pubs)
+        final_authors = pd.concat(all_authors)
+        csv_name_pub = f"{publication}_{START}-{END}_pub_info.csv"
+        csv_name_author = f"{publication}_{START}-{END}_author_info.csv"
+        final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
+        final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
 
 
