@@ -200,7 +200,7 @@ countries = {'AFG': 'Afghanistan',
  'UZB': 'Uzbekistan',
  'VUT': 'Vanuatu',
  'VEN': 'Venezuela',
- 'VNM': 'Viet Nam',
+ 'VNM': 'Vietnam',
  'YEM': 'Yemen',
  'ZMB': 'Zambia',
  'ZWE': 'Zimbabwe'}
