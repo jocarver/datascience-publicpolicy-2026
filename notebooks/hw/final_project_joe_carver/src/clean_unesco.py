@@ -207,6 +207,12 @@ countries = {'AFG': 'Afghanistan',
 
 
 def clean_unesco(df):
+    """
+    Note: this function linearly interpolates missing values to fill in gaps in the data 
+    (since there are many). It does not backpropagate interpolation, so values are only 
+    filled if a past value exists.
+    
+    """
     wide_df = df.set_index(['geoUnit', 'year']).unstack(level='year')['value']
     long_df = wide_df.reset_index().melt(
         id_vars = 'geoUnit',
@@ -228,7 +234,5 @@ def main():
     clean_in.to_csv(PROCESSED_DATA_DIR / 'inbound_students_processed.csv')
     clean_out.to_csv(PROCESSED_DATA_DIR / 'outbound_students_processed.csv')
 
-if __name__ == "__main__":
-    # print(DICT_DIR)
-    
+if __name__ == "__main__":    
     main()
