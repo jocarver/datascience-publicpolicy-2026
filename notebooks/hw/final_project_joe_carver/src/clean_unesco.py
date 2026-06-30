@@ -233,6 +233,10 @@ def main():
     clean_out = clean_unesco(outbound)
     clean_in.to_csv(PROCESSED_DATA_DIR / 'inbound_students_processed.csv')
     clean_out.to_csv(PROCESSED_DATA_DIR / 'outbound_students_processed.csv')
+    print(f'finished cleaning Unesco data, saved to: {PROCESSED_DATA_DIR}')
 
 if __name__ == "__main__":    
+    main()
+
+def run():
     main()

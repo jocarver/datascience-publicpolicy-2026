@@ -40,7 +40,7 @@ def get_scientific_citations(journal_name, year, max_results=5):
             print("No matching peer-reviewed articles found.")
             return
         
-        print(f"Found {len(pmid_list)} articles. Fetching XML data.")
+        #print(f"Found {len(pmid_list)} articles. Fetching XML data.")
 
         # 2. Fetch data in XML format
         fetch_handle = Entrez.efetch(db="pubmed", id=pmid_list, retmode="xml")
@@ -119,15 +119,44 @@ def get_scientific_citations(journal_name, year, max_results=5):
                 
         pubs = pd.DataFrame(pub_info)
         authors = pd.DataFrame(authors)
-        print(f"Retrieved {len(pubs['title'].unique())} publications with {len(authors['author'])} authors from {journal_name} in {year}")
+        #print(f"Retrieved {len(pubs['title'].unique())} publications with {len(authors['author'])} authors from {journal_name} in {year}")
 
         return pubs, authors
 
     except Exception as e:
         print(f"An error occurred during the xml fetch: {e}")
 
+def run():
+    for publication in PUBLICATIONS:
+
+        all_authors = []
+        all_pubs = []
+        error_years = []
+
+        for year in range(START,END+1):
+            time.sleep(1)
+            try:
+                pubs, authors = get_scientific_citations(journal_name = publication, year = year, max_results= MAX_RESULTS)
+                all_pubs.append(pubs)
+                all_authors.append(authors)
+            except Exception as e:
+                error_years.append(year)
+                print(f"An error occured during the main loop during year {year} processing: {e}")
+
+        final_pubs = pd.concat(all_pubs)
+        final_authors = pd.concat(all_authors)
+        csv_name_pub = f"{publication}_{START}-{END}_pub_info.csv"
+        csv_name_author = f"{publication}_{START}-{END}_author_info.csv"
+        final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
+        final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
+        print(f'done fetching {publication} pubmed data')
+        if len(error_years) >0:
+            print(f'errors occurred during years: {error_years}. Recommend re-running.')
+        else:
+            print(f"no errors occurred. {len(final_authors)} authors retrieved from {len(final_pubs)} publications")
+
 if __name__ == "__main__":
-    
+    run()
     # all_authors = []
     # all_pubs = []
 
@@ -146,25 +175,5 @@ if __name__ == "__main__":
     # csv_name_author = f"Nature_2000-2026_author_info.csv"
     # final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
     # final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
-    for publication in PUBLICATIONS:
-
-        all_authors = []
-        all_pubs = []
-
-        for year in range(START,END+1):
-            time.sleep(1)
-            try:
-                pubs, authors = get_scientific_citations(journal_name = publication, year = year, max_results= MAX_RESULTS)
-                all_pubs.append(pubs)
-                all_authors.append(authors)
-            except Exception as e:
-                print(f"An error occured during the main loop during year {year} processing: {e}")
-
-        final_pubs = pd.concat(all_pubs)
-        final_authors = pd.concat(all_authors)
-        csv_name_pub = f"{publication}_{START}-{END}_pub_info.csv"
-        csv_name_author = f"{publication}_{START}-{END}_author_info.csv"
-        final_pubs.to_csv(RAW_DATA_DIR / csv_name_pub)
-        final_authors.to_csv(RAW_DATA_DIR / csv_name_author)
 
 

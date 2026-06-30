@@ -76,6 +76,9 @@ def process_author_data(df, source):
     return df
 
 if __name__ == '__main__':
+    run()
+
+def run():
     cell_df = pd.read_csv(RAW_DATA_DIR / 'Cell_2000-2026_author_info.csv')
     nature_df = pd.read_csv(RAW_DATA_DIR / 'Nature_2000-2026_author_info.csv')
 
@@ -84,4 +87,4 @@ if __name__ == '__main__':
 
     cell_df.to_csv(PROCESSED_DATA_DIR / 'cell_processed_author_data.csv')
     nature_df.to_csv(PROCESSED_DATA_DIR / 'nature_processed_author_data.csv')
-
+    print(f'finished processing Cell and Nature data, output to {PROCESSED_DATA_DIR}')

@@ -33,6 +33,9 @@ def fetch_unesco(indicators = INDICATORS, start = START_YEAR, end = END_YEAR):
         df = pd.DataFrame(records)
         csv_name = f"{ind_dict[indicator]}_{start}-{end}.csv"
         df.to_csv(RAW_DATA_DIR / csv_name)
+        print(f'data saved to : {RAW_DATA_DIR / csv_name}')
 if __name__ == "__main__":
     fetch_unesco()
 
+def run():
+    fetch_unesco()
