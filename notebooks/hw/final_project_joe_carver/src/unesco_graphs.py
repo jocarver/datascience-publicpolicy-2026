@@ -54,10 +54,9 @@ def unesco_fig_8(inbound):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 8 takeaways: for the top 6 countries by total inbound students, the number of inbound students has
-        ### generally increased over time.
-        """))
+    comment = ("#### Figure 8 takeaways: for the top 6 countries by total inbound students, the number of inbound students has "
+        "generally increased over time.")
+    display(Markdown(comment))
     
 def unesco_fig_9(outbound):
     top_6_outbound = list(outbound.groupby('country')['students'].sum().sort_values(ascending=False)[0:6].index)
@@ -87,10 +86,9 @@ def unesco_fig_9(outbound):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 9 takeaways: China and India have the highest number of outbound students, with numbers 
-        ### rising over time.
-        """))
+    comment = ("#### Figure 9 takeaways: China and India have the highest number of outbound students, with numbers"
+                " rising over time.")
+    display(Markdown(comment))
     
 def unesco_fig_10(merged):
     top_10 = merged.groupby('country')['flux'].sum().sort_values(ascending=False)[0:10]
@@ -110,10 +108,9 @@ def unesco_fig_10(merged):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 10 takeaways: student flux is calculated as (inbound students - outbound students). Anglosphere
-        ### countries have the highest inbound flux over the time period. Japan is also in the top 10 for inbound.
-        """))
+    comment = ("#### Figure 10 takeaways: student flux is calculated as (inbound students - outbound students). Anglosphere "
+         "countries have the highest inbound flux over the time period. Japan is also in the top 10 for inbound.")
+    display(Markdown(comment))
     
 def unesco_fig_11(merged):
     top_20_total_exchange = merged.groupby('country')['total_exchange'].sum().sort_values(ascending=False)[0:20]
@@ -172,10 +169,9 @@ def unesco_fig_11(merged):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 11 takeaways: plotting inbound and outbound students on top of one another reveals proportionality
-        ### of inbound and outbound students in countries with the top 20 total student exchanges. 
-        """))
+    comment = ("#### Figure 11 takeaways: plotting inbound and outbound students on top of one another reveals proportionality "
+               "of inbound and outbound students in countries with the top 20 total student exchanges.")
+    display(Markdown(comment))
 
 def run():
     inbound = pd.read_csv(DATA_PATH / 'inbound_students_processed.csv')

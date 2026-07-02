@@ -45,9 +45,8 @@ def pubmed_fig_1(all_authors):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 1 takeaways: publication number holds steady over time for each journal.
-        """))
+    comment = ("#### Figure 1 takeaways: publication number holds steady over time for each journal.")
+    display(Markdown(comment))
 
 def pubmed_fig_2(all_authors):
     plot_df = all_authors.reset_index().groupby(['year', 'publication']).size().reset_index(name='num_authors')
@@ -67,9 +66,8 @@ def pubmed_fig_2(all_authors):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 2 takeaways: total number of authors increase over time.
-        """))
+    comment = ("#### Figure 2 takeaways: total number of authors increase over time.")
+    display(Markdown(comment))
 
 def pubmed_fig_3(all_authors):
     plot_df = all_authors.reset_index().groupby(['year', 'publication', 'PMID']).size().reset_index(name='authors_per_paper')
@@ -91,9 +89,8 @@ def pubmed_fig_3(all_authors):
                 transparent = True)
     
     plt.show()
-    display(Markdown("""
-        ### Figure 3 takeaways: average number of authors per publication also increases over time.
-        """))
+    comment = ("#### Figure 3 takeaways: average number of authors per publication also increases over time.")
+    display(Markdown(comment))
     
 def pubmed_fig_4(all_authors):
     plot_df = all_authors.reset_index().groupby(['year', 'publication', 'PMID'])['primary_country'].nunique().reset_index(name='countries_per_paper')
@@ -114,11 +111,10 @@ def pubmed_fig_4(all_authors):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 4 takeaways: number of countries involved in each publication also tends to increase over time
-        ### Note: pre-2014 authorship affiliation (and therefore country) was not consistently recorded. 
-        ### Subsequent analyses done with data post-2014.
-        """))
+    comment = ("#### Figure 4 takeaways: number of countries involved in each publication also tends to increase over time "
+               "Note: pre-2014 authorship affiliation (and therefore country) was not consistently recorded. "
+               "Subsequent analyses done with data post-2014.")
+    display(Markdown(comment))
 
 def create_cooccur_and_crosstab(all_authors):
     # since affiliations were not fully recored before 2014, restrict
@@ -222,10 +218,9 @@ def pubmed_fig_5(norm_collab_counts, top_5):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 5 takeaways: USA and China have the highest proportion of publications with authors from only that country. 
-        ### Other countries tend to have less solo-country publications. Solo-country publications are generally a minority.    
-        """))
+    comment = ("#### Figure 5 takeaways: USA and China have the highest proportion of publications with authors from only that country. "
+               "Other countries tend to have less solo-country publications. Solo-country publications are generally a minority.")
+    display(Markdown(comment))
     
 def pubmed_fig_6(filtered):
     plot_data = filtered.reset_index().drop_duplicates(subset=['PMID','primary_country'])
@@ -244,10 +239,9 @@ def pubmed_fig_6(filtered):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 6 takeaways: summing the number of publications each country has appeared on shows the USA
-        ### has by far the most affiliated papers for this time period, with the UK, Germany, and China following.
-        """))
+    comment = ("#### Figure 6 takeaways: summing the number of publications each country has appeared on shows the USA "
+               "has by far the most affiliated papers for this time period, with the UK, Germany, and China following.")
+    display(Markdown(comment))
     
 def pubmed_fig_7(co_occurences):
     plot_series = co_occurences.groupby('primary_country_target')['Count'].sum().sort_values(ascending=False)[0:20]
@@ -265,14 +259,13 @@ def pubmed_fig_7(co_occurences):
                 bbox_inches = 'tight',
                 transparent = True)
     plt.show()
-    display(Markdown("""
-        ### Figure 7 details: Collaborations were calculated by summing the number of times each country appears with another
-        ### country on a paper. For instance, if the USA appears with Japan on publication 1, and with Japan and the UK on publication 2,
-        ### that would count as three collaborations for the USA (Japan + Japan + UK), three for Japan (USA + USA + UK), 
-        ### and two for UK (Japan + USA). Even if a multiple authors appear from a single country on a paper, that is counted 
-        #### as one instance of that country for the paper.
-        ### Takeaways: certain countries like the UK and Germany have high number of collaborations relative to publication count.
-        """))
+    comment = ("#### Figure 7 details: Collaborations were calculated by summing the number of times each country appears with another "
+               "country on a paper. For instance, if the USA appears with Japan on publication 1, and with Japan and the UK on publication 2, "
+               "that would count as three collaborations for the USA (Japan + Japan + UK), three for Japan (USA + USA + UK), "
+               "and two for UK (Japan + USA). Even if a multiple authors appear from a single country on a paper, that is counted "
+               "as one instance of that country for the paper. "
+               "\n#### Takeaways: certain countries like the UK and Germany have high number of collaborations relative to publication count.")
+    display(Markdown(comment))
     
 def run():
     cell_authors = pd.read_csv(PROCESSED_DATA_DIR / 'cell_processed_author_data.csv')
